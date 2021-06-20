@@ -6,17 +6,16 @@ import {
   StyleSheet,
   Alert,
   TouchableHighlight,
-  ScrollView,
-  FlatList,
 } from "react-native";
 import { connect } from "react-redux";
 import GridView from "react-native-super-grid";
 import { Button } from "react-native-elements";
 import { addItemToCart, increaseItemQuantity } from "../actions/CartActions";
 
-const ProductCategory = ({route, navigation}) => {
+const ProductCategory = (props) => {
 
-  const { category, products } = route.params;
+  const { category, products } = props.route.params;
+  const { navigation } = props;
 
   let addProductToCart = (item) => {
     console.log("item", item);
@@ -61,7 +60,10 @@ const ProductCategory = ({route, navigation}) => {
           <View style={styles.productView}>
             <TouchableHighlight
               onPress={() =>
-                navigation.navigate("Product", { product: item, products: products })
+                navigation.navigate("Product", {
+                  product: item,
+                  products: products,
+                })
               }
             >
               <View>

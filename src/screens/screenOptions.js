@@ -79,3 +79,18 @@ export const productOptions = ({ navigation, route }) => {
     ),
   };
 };
+
+export const checkoutOptions = ({ navigation }) => {
+  return {
+    headerTitle: "Check Out",
+    headerStyle: {
+      backgroundColor: "#F6F6F6",
+      elevation: 0,
+    },
+    headerTitleStyle: {
+      color: "#00234B",
+      fontSize: 16,
+      fontFamily: "Montserrat-Medium",
+    },
+  };
+};

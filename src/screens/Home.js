@@ -11,7 +11,7 @@ import { Card } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { allProducts } from "./../store/data";
 
-const Home = ({navigation}) => {
+const Home = ({navigation, route}) => {
 
   return (
     <View>

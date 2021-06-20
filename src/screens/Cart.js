@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { connect } from "react-redux";
+import { connect, useStore } from "react-redux";
 import Icon from "react-native-vector-icons/FontAwesome";
 import {
   removeItemFromCart,
@@ -37,12 +37,12 @@ const EmptyCart = () => (
   </View>
 );
 
-class Cart extends Component {
-  state = {
-    loading: false,
-  };
+const Cart = (props) => {
 
-  confirmDelete(index, item) {
+  let { products, total } = props;
+  let [loading, setLoading] = useState(false);
+
+  let confirmDelete = (index, item) => {
     return Alert.alert(
       "Confirm",
       `Are you sure you want to remove ${item.brand_name} from the cart?`,
@@ -50,114 +50,104 @@ class Cart extends Component {
         { text: "No" },
         {
           text: "Yes",
-          onPress: () => this.props.removeItemFromCart(index, item),
+          onPress: () => removeItemFromCart(index, item),
         },
       ]
     );
-  }
+  };
 
-  renderCheckOut() {
+  if (loading) {
+    return <ActivityIndicator size="large" color="#2bbfed" />;
+  }
+  if (products.length > 0) {
     return (
-      <View style={styles.checkOutContainer}>
-        <View>
-          <Text style={styles.checkoutButtonSmallText}>
-            Cart Total:{" "}
-            <Text style={styles.totalText}>${this.props.total}</Text>
-          </Text>
-        </View>
-        <TouchableHighlight
-          onPress={() => {
-            this.props.navigation.navigate("CheckOut");
-          }}
-        >
-          <View style={styles.checkoutButton}>
-            <Text style={styles.checkoutButtonText}>CheckOut</Text>
+      <View style={{ flex: 1 }}>
+        <View style={styles.checkOutContainer}>
+          <View>
+            <Text style={styles.checkoutButtonSmallText}>
+              Cart Total:{" "}
+              <Text style={styles.totalText}>${total}</Text>
+            </Text>
           </View>
-        </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              navigation.navigate("CheckOut");
+            }}
+          >
+            <View style={styles.checkoutButton}>
+              <Text style={styles.checkoutButtonText}>CheckOut</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <ScrollView>
+          <FlatList
+            data={products}
+            keyExtractor={(item, index) => index}
+            renderItem={({ item, index }) => (
+              <View style={styles.itemContainer}>
+                <View style={{ flexDirection: "row" }}>
+                  <View>
+                    <Image
+                      source={{ uri: item.image }}
+                      style={{ width: 60, height: 60 }}
+                    />
+                  </View>
+                  <View style={styles.nameContainer}>
+                    <Text style={styles.brandNameText}>{item.brand_name}</Text>
+                    <Text style={styles.designerNameText}>
+                      {item.designer_name}
+                    </Text>
+                    <Text style={styles.priceText}>${item.price}</Text>
+                  </View>
+                </View>
+                <View style={styles.actionButtonsContainer}>
+                  <View style={styles.actionButtons}>
+                    <TouchableHighlight
+                      style={styles.actionButtonItem}
+                      onPress={() =>
+                        increaseItemQuantity(
+                          index,
+                          item,
+                          (quantity = item.quantity + 1)
+                        )
+                      }
+                    >
+                      <Icon name="plus" color="#2bbfed" size={18} />
+                    </TouchableHighlight>
+                    <View style={styles.qtyView}>
+                      <Text style={styles.itemQtyText}>{item.quantity}</Text>
+                    </View>
+                    {item.quantity > 1 ? (
+                      <TouchableHighlight
+                        style={styles.actionButtonItem}
+                        onPress={() => {
+                          decreaseItemQuantity(
+                            index,
+                            item,
+                            (quantity = item.quantity - 1)
+                          );
+                        }}
+                      >
+                        <Icon name="minus" color="#FF4949" size={18} />
+                      </TouchableHighlight>
+                    ) : null}
+                    <TouchableHighlight
+                      style={styles.actionButtonItem}
+                      onPress={() => confirmDelete(index, item)}
+                    >
+                      <Icon name="trash" color="#FF4949" size={20} />
+                    </TouchableHighlight>
+                  </View>
+                </View>
+              </View>
+            )}
+          />
+        </ScrollView>
       </View>
     );
   }
-
-  renderProducts() {
-    const { products } = this.props;
-    return (
-      <FlatList
-        data={products}
-        keyExtractor={(item, index) => index}
-        renderItem={({ item, index }) => (
-          <View style={styles.itemContainer}>
-            <View style={{ flexDirection: "row" }}>
-              <View>
-                <Image
-                  source={{ uri: item.image }}
-                  style={{ width: 60, height: 60 }}
-                />
-              </View>
-              <View style={styles.nameContainer}>
-                <Text style={styles.brandNameText}>{item.brand_name}</Text>
-                <Text style={styles.designerNameText}>
-                  {item.designer_name}
-                </Text>
-                <Text style={styles.priceText}>${item.price}</Text>
-              </View>
-            </View>
-            <View style={styles.actionButtonsContainer}>
-              <View style={styles.actionButtons}>
-                <TouchableHighlight
-                  style={styles.actionButtonItem}
-                  onPress={() =>
-                    this.props.increaseItemQuantity(
-                      index,
-                      item,
-                      (quantity = item.quantity + 1)
-                    )
-                  }
-                >
-                  <Icon name="plus" color="#2bbfed" size={18} />
-                </TouchableHighlight>
-                <View style={styles.qtyView}>
-                  <Text style={styles.itemQtyText}>{item.quantity}</Text>
-                </View>
-                {item.quantity > 1 ? (
-                  <TouchableHighlight
-                    style={styles.actionButtonItem}
-                    onPress={() => {
-                      this.props.decreaseItemQuantity(
-                        index,
-                        item,
-                        (quantity = item.quantity - 1)
-                      );
-                    }}
-                  >
-                    <Icon name="minus" color="#FF4949" size={18} />
-                  </TouchableHighlight>
-                ) : null}
-                <TouchableHighlight
-                  style={styles.actionButtonItem}
-                  onPress={this.confirmDelete.bind(this, index, item)}
-                >
-                  <Icon name="trash" color="#FF4949" size={20} />
-                </TouchableHighlight>
-              </View>
-            </View>
-          </View>
-        )}
-      />
-    );
-  }
-
-  render() {
-    if (this.props.products.length > 0) {
-      return (
-        <View style={{ flex: 1 }}>
-          {this.renderCheckOut()}
-          <ScrollView>{this.renderProducts()}</ScrollView>
-        </View>
-      );
-    }
-    return <EmptyCart />;
-  }
-}
+  return <EmptyCart />;
+};
 
 const styles = StyleSheet.create({
   checkOutContainer: {

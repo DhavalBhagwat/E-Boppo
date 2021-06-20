@@ -5,12 +5,14 @@ import { MainNavigation } from "./src/config/router.js";
 import configureStore from "./src/store/configureStore";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
+import { LogBox, Platform, StyleSheet } from "react-native";
 
 const store = configureStore();
 export const _navigator = React.createRef();
 export const isReadyRef = React.createRef();
-export let backgroundColor = '#f2f2f2';
+export let backgroundColor = "#f2f2f2";
+
+if (Platform.OS !== "web") LogBox.ignoreAllLogs();
 
 const App = () => {
   return (

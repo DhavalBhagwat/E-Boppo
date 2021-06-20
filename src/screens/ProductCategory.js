@@ -61,7 +61,7 @@ const ProductCategory = ({route, navigation}) => {
           <View style={styles.productView}>
             <TouchableHighlight
               onPress={() =>
-                navigation.navigate("Product", { product: item })
+                navigation.navigate("Product", { product: item, products: products })
               }
             >
               <View>

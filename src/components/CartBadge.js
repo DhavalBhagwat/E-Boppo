@@ -3,12 +3,12 @@ import { View, Text, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/FontAwesome";
 
-const CartBadge = () => {
-  if (this.props.products.length > 0) {
+const CartBadge = (props) => {
+  if (props.products.length > 0) {
     return (
       <View style={styles.container}>
         <View style={styles.badge}>
-          <Text style={styles.count}>{this.props.products.length}</Text>
+          <Text style={styles.count}>{props.products.length}</Text>
         </View>
         <View>
           <Icon size={20} color="#2BEDBA" name="shopping-cart" />

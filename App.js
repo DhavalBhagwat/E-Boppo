@@ -17,11 +17,7 @@ const App = () => {
     <SafeAreaProvider>
       <SafeAreaView style={styles.app}>
         <Provider store={store}>
-          <NavigationContainer
-            ref={_navigator}
-            onReady={() => {
-              isReadyRef.current = true;
-            }}>
+          <NavigationContainer>
             <MainNavigation />
           </NavigationContainer>
         </Provider>

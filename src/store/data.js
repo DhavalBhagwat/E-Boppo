@@ -26,7 +26,7 @@ export const allProducts = {
           price: 750,
           previous_price: 1000,
           image: "https://img.snobswap.com/wZRsUlFS9S903yushj8W_2668173l.jpg",
-          description: ["A slightly over priced dress hehehehehe"],
+          description: ["A slightly over priced dress"],
           instructions: ["Too precious to wash", "Wear everyday"],
         },
       ],
@@ -47,7 +47,7 @@ export const allProducts = {
           previous_price: 1300,
           image:
             "https://4.imimg.com/data4/CQ/WI/MY-2290515/stylish-mens-suits-500x500.jpg",
-          description: ["A slightly over priced suit hehehehehe"],
+          description: ["A slightly over priced suit"],
           instructions: ["Too precious to wash", "Wear everyday"],
         },
       ],

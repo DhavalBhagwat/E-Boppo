@@ -1,0 +1,86 @@
+apply plugin: "com.android.application"
+apply plugin: 'kotlin-android'
+
+import com.android.build.OutputFile
+
+project.ext.react = [
+    entryFile: "index.js",
+    enableHermes: false,
+]
+
+apply from: "../../node_modules/react-native/react.gradle"
+
+def useIntlJsc = false
+def enableSeparateBuildPerCPUArchitecture = false
+def enableProguardInReleaseBuilds = false
+def enableHermes = project.ext.react.get("enableHermes", false);
+def jscFlavor = 'org.webkit:android-jsc:+'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.shoppingcart"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+    }
+    splits {
+        abi {
+            reset()
+            enable enableSeparateBuildPerCPUArchitecture
+            universalApk false
+            include "armeabi-v7a", "x86"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
+            def abi = output.getFilter(OutputFile.ABI)
+            if (abi != null) {
+                output.versionCodeOverride = versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(':react-native-vector-icons')
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.facebook.react:react-native:+"
+    implementation 'com.facebook.soloader:soloader:0.9.0+'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    if (useIntlJsc) {
+        implementation 'org.webkit:android-jsc-intl:+'
+    } else {
+        implementation 'org.webkit:android-jsc:+'
+    }
+
+    if (enableHermes) {
+        def hermesPath = "../../node_modules/hermes-engine/android/";
+        debugImplementation files(hermesPath + "hermes-debug.aar")
+        releaseImplementation files(hermesPath + "hermes-release.aar")
+    } else {
+        implementation jscFlavor
+    }
+}
+
+task copyDownloadableDepsToLibs(type: Copy) {
+    from configurations.compile
+    into 'libs'
+}
+repositories {
+    mavenCentral()
+}
